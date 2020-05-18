@@ -24,9 +24,10 @@ void lexicographical_02(int sn, int en)
     for(int i=0;i<=9;i++)
     {
         if(sn * 10 + i < en)
-            lexicographical_02(sn*10+i,en);
+            lexicographical_02(sn*10+i,en);    
     }
-    lexicographical_02(sn+1,en);
+    if(sn < 9)
+        lexicographical_02(sn+1,en);
 }
 
 int main()
@@ -34,6 +35,6 @@ int main()
     int n;
     cout<<"ENTER n\n";
     cin>>n;
-    lexicographical_01(n,"");
-    // lexicographical_02(1,n);
+    // lexicographical_01(n,"");
+    lexicographical_02(1,n);
 }
