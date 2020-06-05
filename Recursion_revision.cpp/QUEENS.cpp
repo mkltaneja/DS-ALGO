@@ -125,7 +125,7 @@ int queen2d_combi(vector<vector<bool>> &boxes, int tnq, int lqpl, string ans)
 
 ////////////OPTIMIZED METHOD FOR 2D N-QUEEN=================================================
 
-int queen2d_permu_2(vector<vector<bool>> &boxes, vector<bool> row, vector<bool> col, vector<bool> rdiag, vector<bool> ldiag, int n, int m, int tnq, string ans)
+int queen2d_permu_2(vector<bool> row, vector<bool> col, vector<bool> rdiag, vector<bool> ldiag, int n, int m, int tnq, string ans)
 {
     if (tnq == 0)
     {
@@ -138,17 +138,15 @@ int queen2d_permu_2(vector<vector<bool>> &boxes, vector<bool> row, vector<bool> 
     {
         int r = i / m;
         int c = i % m;
-        if (!boxes[r][c] && !row[r] && !col[c] && !rdiag[(m - 1) - (c - r)] && !ldiag[r + c])
+        if (!row[r] && !col[c] && !rdiag[(m - 1) - (c - r)] && !ldiag[r + c])
         {
-            boxes[r][c] = true;
             row[r] = true;
             col[c] = true;
             rdiag[(m - 1) - (c - r)] = true;
             ldiag[r + c] = true;
 
-            count += queen2d_permu_2(boxes, row, col, rdiag, ldiag, n, m, tnq - 1, ans + "[ " + to_string(r) + ", " + to_string(c) + " ] ");
+            count += queen2d_permu_2(row, col, rdiag, ldiag, n, m, tnq - 1, ans + "[ " + to_string(r) + ", " + to_string(c) + " ] ");
 
-            boxes[r][c] = false;
             row[r] = false;
             col[c] = false;
             rdiag[(m - 1) - (c - r)] = false;
@@ -157,7 +155,7 @@ int queen2d_permu_2(vector<vector<bool>> &boxes, vector<bool> row, vector<bool> 
     }
     return count;
 }
-int queen2d_combi_2(vector<vector<bool>> &boxes, vector<bool> row, vector<bool> col, vector<bool> rdiag, vector<bool> ldiag, int n, int m, int tnq, int lqpl, string ans)
+int queen2d_combi_2(vector<bool> row, vector<bool> col, vector<bool> rdiag, vector<bool> ldiag, int n, int m, int tnq, int lqpl, string ans)
 {
     if (tnq == 0)
     {
@@ -170,21 +168,91 @@ int queen2d_combi_2(vector<vector<bool>> &boxes, vector<bool> row, vector<bool> 
     {
         int r = i / m;
         int c = i % m;
-        if (!boxes[r][c] && !row[r] && !col[c] && !rdiag[(m - 1) - (c - r)] && !ldiag[r + c])
+        if (!row[r] && !col[c] && !rdiag[(m - 1) - (c - r)] && !ldiag[r + c])
         {
-            boxes[r][c] = true;
             row[r] = true;
             col[c] = true;
             rdiag[(m - 1) - (c - r)] = true;
             ldiag[r + c] = true;
 
-            count += queen2d_combi_2(boxes, row, col, rdiag, ldiag, n, m, tnq - 1, i + 1, ans + "[ " + to_string(r) + ", " + to_string(c) + " ] ");
+            count += queen2d_combi_2(row, col, rdiag, ldiag, n, m, tnq - 1, i + 1, ans + "[ " + to_string(r) + ", " + to_string(c) + " ] ");
 
-            boxes[r][c] = false;
             row[r] = false;
             col[c] = false;
             rdiag[(m - 1) - (c - r)] = false;
             ldiag[r + c] = false;
+        }
+    }
+    return count;
+}
+
+int queen2d_permu_2_bits(int row, int col, int rdiag, int ldiag, int n, int m, int tnq, string ans)
+{
+    if (tnq == 0)
+    {
+        cout << ans << "]" << endl;
+        return 1;
+    }
+
+    int count = 0;
+    for (int i = 0; i < n * m; i++)
+    {
+        int r = i / m;
+        int c = i % m;
+
+        int w = (1 << r);
+        int x = (1 << c);
+        int y = (1 << ((m - 1) - (c - r)));
+        int z = (1 << (r + c));
+        if (!(row & w) && !(col & x) && !(rdiag & y) && !(ldiag & z))
+        {
+            row ^= w;
+            col ^= x;
+            rdiag ^= y;
+            ldiag ^= z;
+
+            count += queen2d_permu_2_bits(row, col, rdiag, ldiag, n, m, tnq - 1, ans + "[ " + to_string(r) + ", " + to_string(c) + " ] ");
+
+            row ^= w;
+            col ^= x;
+            rdiag ^= y;
+            ldiag ^= z;
+        }
+    }
+    return count;
+}
+
+int queen2d_combi_2_bits(int row, int col, int rdiag, int ldiag, int n, int m, int tnq, int lqpl, string ans)
+{
+    if (tnq == 0)
+    {
+        cout << ans << "]" << endl;
+        return 1;
+    }
+
+    int count = 0;
+    for (int i = lqpl; i < n * m; i++)
+    {
+        int r = i / m;
+        int c = i % m;
+
+        int w = (1 << r);
+        int x = (1 << c);
+        int y = (1 << ((m - 1) - (c - r)));
+        int z = (1 << (r + c));
+        if (!(row & w) && !(col & x) && !(rdiag & y) && !(ldiag & z))
+        {
+            row ^= w;
+            col ^= x;
+            rdiag ^= y;
+            ldiag ^= z;
+
+            count += queen2d_combi_2_bits(row, col, rdiag, ldiag, n, m, tnq - 1, i + 1, ans + "[ " + to_string(r) + ", " + to_string(c) + " ] ");
+
+            row ^= w;
+            col ^= x;
+            rdiag ^= y;
+            ldiag ^= z;
         }
     }
     return count;
@@ -209,8 +277,9 @@ int main()
     cout << "ENTER NO. OF BOXES (columnise): ";
     cin >> m;
     vector<vector<bool>> arr2d(n, vector<bool>(m, 0));
-    // cout<<"TOTAL 2D PERMUTATIONS IN PLACING THE QUEENS ARE: "<<queen2d_permu(arr2d,q,"[")<<endl<<endl;
-    cout<<"TOTAL 2D COMBINATIONS IN PLACING THE QUEENS ARE: "<<queen2d_combi(arr2d,q,0,"[")<<endl<<endl;
+
+    // cout << "TOTAL 2D PERMUTATIONS IN PLACING THE QUEENS ARE: " << queen2d_permu(arr2d, q, "[") << endl;
+    cout << "TOTAL 2D COMBINATIONS IN PLACING THE QUEENS ARE: " << queen2d_combi(arr2d, q, 0, "[") << endl;
 
     ////// Alternative method for 2D N queen ===========================
 
@@ -220,5 +289,15 @@ int main()
     vector<bool> ldiag(n + m - 1, false);
 
     // cout<<"TOTAL 2D PERMUTATIONS IN PLACING THE QUEENS ARE: "<<queen2d_permu_2(arr2d,row,col,rdiag,ldiag,n,m,q,"[");
-    cout << "TOTAL 2D COMBINATIONS IN PLACING THE QUEENS ARE: " << queen2d_combi_2(arr2d, row, col, rdiag, ldiag, n, m, q, 0, "[");
+    // cout << "TOTAL 2D COMBINATIONS IN PLACING THE QUEENS ARE: " << queen2d_combi_2(row, col, rdiag, ldiag, n, m, q, 0, "[");
+
+    //////////////////  BY BITS  //////////////////////
+
+    int r = 0;
+    int c = 0;
+    int rd = 0;
+    int ld = 0;
+
+    // cout << "TOTAL 2D COMBINATIONS IN PLACING THE QUEENS BY BITS ARE: " << queen2d_permu_2_bits(r, c, rd, ld, n, m, q, "[");
+    cout << "TOTAL 2D COMBINATIONS IN PLACING THE QUEENS BY BITS ARE: " << queen2d_combi_2_bits(r, c, rd, ld, n, m, q, 0, "[");
 }
