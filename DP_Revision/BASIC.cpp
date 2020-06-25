@@ -228,11 +228,11 @@ int dicepath_tab(int si, int ei, vector<int> &dp)
 int dicepath_best(int si, int ei)
 {
     list<int> ll;
-    ll.push_front(1);
+    // ll.push_front(1);
     for(int i = ei; i >= si; i--)
     {
         cout<<ll.front()<<endl;
-        if(i == ei)
+        if(i >= ei-1)
         {
             ll.push_front(1);
             continue;
