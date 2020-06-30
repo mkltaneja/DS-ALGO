@@ -22,7 +22,7 @@ void display2(int n, int m, vector<vector<int>> &dp)
     }
 }
 
-//    FIBONACCI ============================================================================
+// FIBONACCI ===========================================================================================================
 
 int fib(int n)
 {
@@ -55,6 +55,23 @@ int fib_tab(int N, vector<int> &dp)
     }
     return dp[N];
 }
+
+void fibonacci()
+{
+    int n = 5;
+    // cout<<fib(n)<<endl;
+
+    // BY DP===========
+    vector<int> dp(n + 1, 0);
+    // cout << fib_dp(n, dp)<<endl;
+
+    // BY Tabulation
+    // cout << fib_tab(n, dp)<<endl;
+
+    display(dp);
+}
+
+//    MAZE PATH SERIES  ==================================================================================
 
 int mazepathHVD(int sr, int sc, int er, int ec)
 {
@@ -250,23 +267,6 @@ int dicepath_best(int si, int ei)
     return ll.front();
 }
 
-void fibonacci()
-{
-    int n = 5;
-    // cout<<fib(n)<<endl;
-
-    // BY DP===========
-    vector<int> dp(n + 1, 0);
-    // cout << fib_dp(n, dp)<<endl;
-
-    // BY Tabulation
-    // cout << fib_tab(n, dp)<<endl;
-
-    display(dp);
-}
-
-//    MAZE PATH SERIES  ==================================================================================
-
 void pathset()
 {
     int n = 3, m = 3;
@@ -299,9 +299,61 @@ void pathset()
     // display2(n, m, dp);
 }
 
+// COIN CHANGE ====================================================================================
+
+int infi_permu(vector<int> &coins, int tar, vector<int> &dp)
+{
+    if(tar == 0)
+        return dp[tar] = 1;
+
+    int count = 0;
+    for(int coin : coins)
+        if(tar - coin >= 0)
+            count += infi_permu(coins, tar - coin, dp);
+
+    return dp[tar] = count;
+}
+
+int infi_permu_tab(vector<int> &coins, int tar, vector<int> &dp)
+{
+    dp[0] = 1;
+    for(int t = 0; t <= tar; t++)
+        for(int coin : coins)
+            if(t - coin >= 0)
+                dp[t] += dp[t - coin];
+    return dp[tar];
+}
+
+int infi_combi_tab(vector<int> &coins, int tar, vector<int> &dp)
+{
+    dp[0] = 1;
+    for(int coin : coins)
+        for(int t = 0; t <= tar; t++)
+            if(t - coin >= 0)
+                dp[t] += dp[t - coin];
+     
+    return dp[tar];
+}
+
+void coin_change()
+{
+    vector<int> arr = {2, 3, 5, 7};
+    int tar = 10;
+    vector<int> dp(tar+1, 0);
+    // cout<<infi_permu(arr, tar, dp)<<endl;
+    // cout<<infi_permu_tab(arr, tar, dp)<<endl;
+    
+    // cout<<infi_combi(arr, tar, dp)<<endl;  --> not possible by memoization
+    cout<<infi_combi_tab(arr, tar, dp)<<endl;
+    
+    display(dp);
+}
+
 int main()
 {
     // fibonacci();
 
-    pathset();
+    // pathset();
+
+    coin_change();
 }
