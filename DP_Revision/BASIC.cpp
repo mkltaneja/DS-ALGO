@@ -379,6 +379,7 @@ void coin_change()
 
 // }
 
+// LIS
 int LIS_left_to_right(vector<int> &arr, vector<int> &dp)
 {
     int omax = 1;
@@ -398,7 +399,7 @@ int LIS_left_to_right(vector<int> &arr, vector<int> &dp)
 int LDS_right_to_left(vector<int> &arr, vector<int> &dp)
 {
     int omax = 1;
-    for (int i = arr.size() - 2; i >= 0; i--)
+    for (int i = arr.size() - 1; i >= 0; i--)
     {
         for (int j = i + 1; j < arr.size(); j++)
         {
@@ -410,6 +411,7 @@ int LDS_right_to_left(vector<int> &arr, vector<int> &dp)
     return omax;
 }
 
+// LDS
 int LDS_left_to_right(vector<int> &arr, vector<int> &dp)
 {
     int omax = 1;
@@ -425,10 +427,11 @@ int LDS_left_to_right(vector<int> &arr, vector<int> &dp)
     return omax;
 }
 
+// Same as LDS
 int LIS_right_to_left(vector<int> &arr, vector<int> &dp)
 {
     int omax = 1;
-    for (int i = arr.size() - 2; i >= 0; i--)
+    for (int i = arr.size() - 1; i >= 0; i--)
     {
         for (int j = i + 1; j < arr.size(); j++)
         {
@@ -461,11 +464,79 @@ void LIS()
 {
     vector<int> arr{0, 8, 12, 2, 10, 6, 14, 5, 13, 3};
     vector<int> dp(arr.size(), 1);
-    cout << LIS_left_to_right(arr, dp) << endl;
+    // cout << LIS_left_to_right(arr, dp) << endl;
     // cout<<LIS_right_to_left(arr,dp)<<endl;
-    // cout<<LDS_left_to_right(arr,dp)<<endl;
+    cout<<LDS_left_to_right(arr,dp)<<endl;
     // cout<<LIS_right_to_left(arr,dp)<<endl;
     display(dp);
+}
+
+// MCM =========================================================================================
+
+int min_MCM_cost(int si, int ei, vector<int> &arr)
+{
+    if(si + 1 == ei)
+        return 0;
+
+    int minans = 1e9;
+    for(int cut = si+1; cut < ei; cut++)
+    {
+        int leftCost = min_MCM_cost(si, cut, arr);
+        int rightCost = min_MCM_cost(cut, ei, arr);
+
+        int myCost = leftCost + arr[si]*arr[cut]*arr[ei] + rightCost;
+
+        if(myCost < minans)
+        {
+            minans = myCost;
+        }
+    }
+    return minans;
+}
+
+int min_MCM_cost_mem(int si, int ei, vector<int> &arr, vector<vector<int>> &dp)
+{
+    if(si + 1 == ei)
+        return dp[si][ei] = 0;
+
+    if(dp[si][ei] != -1)
+        return dp[si][ei];
+
+    int minans = 1e9;
+    for(int cut = si+1; cut < ei; cut++)
+    {
+        int leftCost = min_MCM_cost_mem(si, cut, arr, dp);
+        int rightCost = min_MCM_cost_mem(cut, ei, arr, dp);
+
+        int myCost = leftCost + arr[si]*arr[cut]*arr[ei] + rightCost;
+
+        if(myCost < minans)
+        {
+            minans = myCost;
+        }
+    }
+    return dp[si][ei] = minans;
+}
+
+// tabulation
+
+
+
+// forming the string along with mincost
+
+
+
+
+void MCM()
+{
+    vector<int> arr = {1,2,3,4,5,6};
+    int n = arr.size();
+    vector<vector<int>> dp(n, vector<int>(n,-1));
+    cout<<min_MCM_cost(0,n-1,arr)<<endl;
+    cout<<min_MCM_cost_mem(0,n-1,arr,dp)<<endl;
+    cout<<min_MCM_cost_dp(0,n-1,arr,dp)<<endl;
+
+    display2(n,n,dp);
 }
 
 int main()
@@ -476,5 +547,7 @@ int main()
 
     // coin_change();
 
-    LIS();
+    // LIS();
+
+    MCM();
 }

@@ -22,11 +22,11 @@ vector<vector<edge>> graph(N, vector<edge>());
 
 void addEdge(vector<vector<edge>> &gp, int u, int v, int w)
 {
-    // if (u >= graph.size() || v >= graph.size() || u < 0 || v < 0)
-    //     return;
+    if (u >= graph.size() || v >= graph.size() || u < 0 || v < 0)
+        return;
 
     gp[u].push_back(edge(v, w));
-    // gp[v].push_back(edge(u, w));
+    gp[v].push_back(edge(u, w));
 }
 
 int findEdge(int v1, int v2)      //return whether there is a direct edge from v1 to v2
@@ -445,5 +445,3 @@ int main()
 
     isBipartite();
 }
-
-
